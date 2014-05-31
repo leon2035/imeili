@@ -1,0 +1,109 @@
+{% extends "cashier/cart_base.html" %}
+{% load staticfiles %}
+{% block title %}收银台{% endblock %}
+{% block pagename %} 尊敬的会员：<label id="name"></label> 手机：<label id="phoneNumber"></label> 欢迎来到收银台！ {% endblock %}
+{% block content %}
+
+
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                </tr>
+                </thead>
+                <tbody id="cart_tbody">
+                </tbody>
+            </table>
+
+
+        </div>
+        <div class="col-md-2">
+            <div class="img">
+                <img src="{% static 'img/loading.gif' %}" id="qr_id"/>
+            </div>
+            <p><a class="btn btn-primary btn-lg btn-block" href="{% url 'clean_cart' %}">清空购物车</a></p>
+
+            <p><a class="btn btn-danger btn-lg btn-block" href="{% url 'deal_order' %}">现金支付</a></p>
+
+            <p><a class="btn btn-warning btn-lg btn-block" href="#">会员卡支付</a></p>
+        </div>
+    </div>
+{% endblock %}
+{% block on_ready %}
+
+    <script>
+
+        function ajaxLoad(url, callback) {
+            $.ajax({
+                type: "get",
+                dataType: "text",
+                url: url,
+                success: callback,
+                error: function (xmlobj, state, errorThrown) {
+                    alert("network occur error");
+                }
+            });
+
+        }
+
+
+        function success(data) {
+            data = eval("(" + data + ")")
+            if (0 == data) {
+                setTimeout(function () {
+                    ajaxLoad("{% url 'check_qrcode_scanned' %}", success)
+                }, 1500);
+
+            }
+            else {
+
+                $("#phoneNumber").text(data.phone);
+                $("#name").text(data.name)
+                $("#qr_id").attr("src", "{% static 'img/ok.png' %}");
+            }
+
+
+        }
+        function cart_item(data) {
+            data = eval("(" + data + ")")
+            $("#cart_tbody").html("");
+            var totalPrice = 0;
+            for (var d in data) {
+                var name = data[d].name;
+                var price = data[d].unit_price;
+                var quality = data[d].quantity;
+                price = Number(price);
+                quality = Number(quality);
+                totalPrice = price * quality + totalPrice;
+
+                $("#cart_tbody").append('<tr><td>' + name + '</td><td>' + price + '</td><td>' + quality + '</td></tr>')
+
+            }
+            $("#cart_tbody").append("<tr><th></th><td></td><th>" + "总价：" + totalPrice + "</th> </tr>");
+
+            setTimeout(function () {
+                ajaxLoad("{% url 'my_view_cart' %}", cart_item)
+            }, 1000);
+
+        }
+        $(function () {
+            $("#qr_id").attr("src", "{% url 'show_weixin_qrcode' %}");
+            $("#qr_id").width("200px");
+            $("#qr_id").height("200px");
+            ajaxLoad("{% url 'check_qrcode_scanned' %}", success)
+            ajaxLoad("{% url 'my_view_cart' %}", cart_item)
+
+
+        })
+    </script>
+
+{% endblock %}
+
+
+
+
+

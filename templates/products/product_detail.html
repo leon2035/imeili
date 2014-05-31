@@ -1,0 +1,10 @@
+{% extends 'products/product_base.html' %}
+{% block pagename %}{{ object.name }}{% endblock %}
+{% block content %}
+<p>名称：{{ object.name }}</p>
+<p>品牌: {{ object.brand }}</p>
+<p>分类: {{ object.category }}</p>
+<p>单价: {{ object.unit_price }}</p>
+<p>库存: {{ object.inventory }}</p>
+<p>是否上架: {{ object.is_active }}</p>
+{% endblock %}

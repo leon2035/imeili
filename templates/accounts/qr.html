@@ -1,0 +1,59 @@
+{% extends 'accounts/accounts_base.html' %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% load qr_tags %}
+{% block title %}登录{% endblock title %}
+{% block pagename %}登录{% endblock %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <h2>您已登录，无需重复登录。更改账户，请先<a href="{% url 'auth_logout' %}">注销</a>当前账户。</h2>
+    {% else %}
+        <ul class="nav nav-tabs">
+            <li><a href="{% url 'auth_login' %}">管理员登录</a></li>
+            <li class="active"><a href="#">员工登录</a></li>
+        </ul>
+        <br>
+        {% qr_from_text url %}
+    {% endif %}
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script>
+    function poll() {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'qr_check_scan' auth_code_hash %}",
+            dataType: "script",
+            async: true,
+            cache: false,
+            timeout: 120000, /* ms */
+            success: function (data, textStatus, jqXHR) {
+                switch (window.code) {
+                    case 200:
+                        window.location = window.redirect_uri;
+                        break;
+                    case 201:
+                        $('.errorMsg').hide();
+                        $('.normlDesc').hide();
+                        $('.successMsg').show();
+                    case 408:
+                        setTimeout('poll()', 1000);
+                        break;
+                    case 400:
+                    case 500:
+                        window.location.reload();
+                        break;
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (textStatus == 'timeout') {
+                    setTimeout('poll()', 500);
+                } else {
+                    setTimeout('poll()', 5000);
+                }
+            }
+        });
+    }
+    poll();
+</script>
+{% endblock %}

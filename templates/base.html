@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+{% load staticfiles %}
+<html lang="zh">
+<head>
+    <!-- Force latest IE rendering engine or ChromeFrame if installed -->
+    <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %} - 美妆会员管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block css %}
+        <!-- Bootstrap styles -->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <!-- Generic page styles -->
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    {% endblock css %}
+</head>
+<body>
+{% block body %}
+    <div class="container">
+        <div class="content">
+            <div class="page-header">
+                <h3>{% block pagename %} 页面名称 {% endblock %}</h3>
+            </div>
+            {% block content %}
+                内容
+            {% endblock %}
+        </div>
+        <!-- /content -->
+    </div>
+{% endblock %}
+{% block js %}
+    <!--这里插入具体页面引用的js库，或者js代码-->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}
+
+{% block on_ready %}
+{% endblock %}
+</body>
+</html>

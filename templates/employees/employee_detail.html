@@ -1,0 +1,13 @@
+{% extends 'employees/employees_base.html' %}
+{% block pagename %}{{ object.name }}的个人资料{% endblock %}
+{% block content%}
+<p>姓名：{{ object.name }}</p>
+<p>身份证: {{ object.id_card }}</p>
+<p>手机: {{ object.phone }}</p>
+<p>性别: {{ object.sex }}</p>
+<p>生日: {{ object.birthday }}</p>
+<p>职位: {{ object.position.name }}</p>
+<p>固话: {{ object.tel }}</p>
+<p>邮箱: {{ object.email }}</p>
+<p>地址: {{ object.address }}</p>
+{% endblock %}
